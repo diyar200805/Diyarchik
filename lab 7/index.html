@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSpace Mega — Супермаркет Гаджетов</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-hover: #5b4cc4;
+            --accent: #ff7675;
+            --bg-main: #f0f3f7;
+            --bg-card: #ffffff;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --success: #00b894;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); padding-bottom: 50px; }
+
+        header { background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; padding: 35px 20px; text-align: center; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2); }
+        header h1 { font-size: 32px; margin-bottom: 5px; letter-spacing: 1px; }
+        header p { font-size: 15px; opacity: 0.9; }
+
+        .nav-tabs { display: flex; justify-content: center; background: var(--bg-card); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .tab-btn { padding: 18px 35px; cursor: pointer; border: none; background: none; font-size: 16px; font-weight: 600; color: var(--text-muted); position: relative; transition: all 0.3s ease; }
+        .tab-btn:hover { color: var(--primary); }
+        .tab-btn.active { color: var(--primary); }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background: var(--primary); border-radius: 2px 2px 0 0; }
+        
+        .badge { background: var(--accent); color: white; border-radius: 20px; padding: 2px 8px; font-size: 12px; margin-left: 6px; font-weight: bold; transition: transform 0.2s; }
+        .badge.pop { transform: scale(1.3); }
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; min-height: 400px; }
+
+        .filter-bar { background: var(--bg-card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between; align-items: center; }
+        .search-input { flex: 1; min-width: 280px; padding: 12px 16px; border: 2px solid #edf2f7; border-radius: 8px; font-size: 15px; outline: none; transition: border-color 0.2s; }
+        .search-input:focus { border-color: var(--primary); }
+        
+        .categories-filter { display: flex; flex-wrap: wrap; gap: 8px; }
+        .filter-chip { padding: 10px 18px; background: #edf2f7; border: none; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-muted); transition: all 0.2s; }
+        .filter-chip:hover { background: #e2e8f0; color: var(--text-main); }
+        .filter-chip.active { background: var(--primary); color: white; }
+
+        .category-title { font-size: 24px; margin: 35px 0 15px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .category-title::after { content: ''; flex: 1; height: 2px; background: linear-gradient(to right, #a29bfe, transparent); }
+        
+        .grid-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; }
+        
+        .card { background: var(--bg-card); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.04); transition: all 0.3s ease; display: flex; flex-direction: column; position: relative; }
+        .card:hover { transform: translateY(-6px); box-shadow: 0 12px 24px rgba(108, 92, 231, 0.18); }
+        
+        .card-img-wrap { height: 180px; width: 100%; overflow: hidden; background: #f1f2f6; position: relative; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .card:hover .card-img { transform: scale(1.06); }
+        
+        .card-body { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; color: var(--text-main); line-height: 1.3; }
+        .card-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; flex-grow: 1; }
+        
+        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; }
+        .price { font-size: 20px; font-weight: 800; color: var(--primary); }
+        
+        .btn-buy { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .btn-buy:hover { background: var(--primary-hover); }
+
+        .cart-container { background: var(--bg-card); padding: 30px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .cart-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #edf2f7; }
+        .cart-row:last-of-type { border-bottom: none; }
+        .cart-item-info { display: flex; align-items: center; gap: 20px; }
+        .cart-item-img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; background: #f1f2f6; }
+        .cart-item-name { font-weight: 700; font-size: 16px; }
+        .cart-item-price { font-size: 14px; color: var(--text-muted); margin-top: 2px; }
+        
+        .quantity-controls { display: flex; align-items: center; gap: 12px; }
+        .btn-qty { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #cbd5e1; background: white; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-qty:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .item-total { font-size: 18px; font-weight: 700; width: 120px; text-align: right; }
+        
+        .cart-summary { margin-top: 35px; padding-top: 25px; border-top: 2px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .total-label { font-size: 20px; font-weight: bold; }
+        .total-amount { font-size: 28px; font-weight: 800; color: var(--success); }
+        
+        .btn-checkout { background: var(--success); color: white; border: none; padding: 14px 35px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 184, 148, 0.2); transition: transform 0.2s; }
+        .btn-checkout:hover { transform: translateY(-2px); }
+        
+        .empty-cart-view { text-align: center; padding: 40px 0; color: var(--text-muted); }
+        .empty-cart-icon { font-size: 70px; margin-bottom: 15px; display: block; }
+
+        .about-section { background: var(--bg-card); padding: 45px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .about-section h2 { color: var(--primary); margin-bottom: 15px; }
+        .about-section p { line-height: 1.7; color: var(--text-muted); margin-bottom: 25px; font-size: 15px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-top: 35px; }
+        .feature-box { background: var(--bg-main); padding: 25px; border-radius: 12px; text-align: center; }
+        .feature-icon { font-size: 36px; margin-bottom: 12px; display: block; }
+        .feature-box h4 { margin-bottom: 8px; font-size: 16px; }
+        .feature-box p { font-size: 13px; margin: 0; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>⚡ CYBERSPACE MEGA STORE ⚡</h1>
+        <p>Премиальная цифровая техника и аксессуары будущего</p>
+    </header>
+
+    <nav class="nav-tabs">
+        <button class="tab-btn active" id="tab-products" onclick="switchTab('products')">🛍️ Каталог гаджетов</button>
+        <button class="tab-btn" id="tab-cart" onclick="switchTab('cart')">🛒 Корзина покупок<span id="cart-count" class="badge" style="display:none;">0</span></button>
+        <button class="tab-btn" id="tab-about" onclick="switchTab('about')">ℹ️ Наша философия</button>
+    </nav>
+    
+    <div class="container" id="main-content"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
