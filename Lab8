@@ -1,0 +1,73 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    padding: 50px;
+    display: flex;
+    justify-content: center;
+}
+.app-container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 420px;
+}
+h2 {
+    text-align: center;
+    color: #333;
+    margin-top: 0;
+}
+.cart-form {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 6px;
+    margin-bottom: 15px;
+}
+input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+button {
+    padding: 8px 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #218838;
+}
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 8px;
+    margin-bottom: 6px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    font-size: 13px;
+}
+li button {
+    background-color: #dc3545;
+    padding: 4px 8px;
+    font-size: 12px;
+}
+li button:hover {
+    background-color: #c82333;
+}
+.cart-total {
+    margin-top: 15px;
+    text-align: right;
+    font-size: 15px;
+}
