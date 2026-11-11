@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Лабораторная работа №11 — Вариант 11 (Class Components)</title>
+  <!-- Подключаем React и Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; color: #1f2937; padding: 24px; margin: 0;">
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    // Дочерний компонент через класс (Class Component)
+    class ProductCard extends React.Component {
+      render() {
+        const { name, price, image, onAddToCart } = this.props;
+
+        return (
+          <div style={{ 
+            background: '#ffffff', 
+            border: '1px solid #e5e7eb', 
+            padding: '16px', 
+            borderRadius: '16px', 
+            width: '210px', 
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between'
+          }}>
+            <div>
+              <div style={{ 
+                height: '110px', background: '#f3f4f6', borderRadius: '10px', 
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', marginBottom: '12px' 
+              }}>
+                {image}
+              </div>
+              <h4 style={{ margin: '0 0 6px 0', color: '#111827', fontSize: '16px', fontWeight: '600' }}>{name}</h4>
+              <p style={{ color: '#059669', fontWeight: '700', fontSize: '17px', margin: '0 0 14px 0' }}>
+                {price.toLocaleString()} ₸
+              </p>
+            </div>
+            <button 
+              onClick={() => onAddToCart({ name, price })}
+              style={{ 
+                background: '#2563eb', color: 'white', border: 'none', 
+                padding: '10px 12px', borderRadius: '10px', cursor: 'pointer',
+                fontWeight: '600', fontSize: '14px', width: '100%',
+                boxShadow: '0 2px 4px rgba(37, 99, 235, 0.2)'
+              }}
+            >
+              + В корзину
+            </button>
+          </div>
+        );
+      }
+    }
+
+    // Главный родительский компонент через класс (Class Component)
+    class App extends React.Component {
+      constructor(props) {
+        super(props);
+        // Инициализация состояния (state) в классовом компоненте
+        this.state = {
+          cart: {
+            items: [],
+            count: 0,
+            total: 0
+          },
+          user: {
+            name: 'Асимов Дияр',
+            status: 'Student VIP'
+          },
+          isCheckoutOpen: false,
+          notification: null
+        };
+      }
+
+      showNotification = (msg) => {
+        this.setState({ notification: msg });
+        setTimeout(() => {
+          this.setState({ notification: null });
+        }, 3000);
+      }
+
+      // Обработчик добавления товара (передается в props ребенку)
+      handleAddToCart = (product) => {
+        this.setState(prevState => ({
+          cart: {
+            items: [...prevState.cart.items, product],
+            count: prevState.cart.count + 1,
+            total: prevState.cart.total + product.price
+          }
+        }));
+        this.showNotification(`Товар "${product.name}" добавлен в корзину!`);
+      }
+
+      // Очистка корзины
+      handleClearCart = () => {
+        this.setState({
+          cart: { items: [], count: 0, total: 0 }
+        });
+        this.showNotification('Корзина очищена');
+      }
+
+      // Оплата заказа
+      handlePayment = (method) => {
+        const { total } = this.state.cart;
+        if (total === 0) return;
+        alert(`Успешно оплачено через ${method}! Сумма: ${total.toLocaleString()} ₸. Заказ оформлен.`);
+        this.setState({
+          cart: { items: [], count: 0, total: 0 },
+          isCheckoutOpen: false
+        });
+      }
+
+      render() {
+        const { cart, user, isCheckoutOpen, notification } = this.state;
+
+        return (
+          <div style={{ maxWidth: '850px', margin: '0 auto' }}>
+            
+            {/* Уведомление (Toast) */}
+            {notification && (
+              <div style={{
+                position: 'fixed', top: '20px', right: '20px', background: '#10b981', color: 'white',
+                padding: '12px 20px', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                zIndex: 1000, fontWeight: '600'
+              }}>
+                ✨ {notification}
+              </div>
+            )}
+
+            {/* Шапка и аккаунт */}
+            <div style={{ 
+              background: 'white', padding: '16px 24px', borderRadius: '16px', 
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
+              marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+            }}>
+              <div>
+                <h2 style={{ margin: '0 0 2px 0', fontSize: '20px', color: '#111827' }}>Лабораторная работа №11</h2>
+                <span style={{ fontSize: '13px', color: '#6b7280' }}>Вариант 11: Корзина (Class Component ООП)[cite: 2]</span>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#f9fafb', padding: '8px 14px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+                <div style={{ width: '36px', height: '36px', background: '#2563eb', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                  ДА
+                </div>
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#1f2937' }}>{user.name}</div>
+                  <div style={{ fontSize: '11px', color: '#059669', fontWeight: '500' }}>{user.status}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Панель корзины (Родительский State) */}
+            <div style={{ 
+              background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)', 
+              color: 'white', padding: '24px', borderRadius: '16px', marginBottom: '25px',
+              boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.3)',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+            }}>
+              <div>
+                <span style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.8, fontWeight: '700' }}>
+                  Корзина покупателя (Классовый компонент)
+                </span>
+                <div style={{ fontSize: '24px', fontWeight: '700', marginTop: '6px' }}>
+                  {cart.total.toLocaleString()} ₸
+                </div>
+                <div style={{ fontSize: '14px', opacity: 0.9, marginTop: '4px' }}>
+                  Выбрано товаров: <strong>{cart.count}</strong>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px' }}>
+                {cart.count > 0 && (
+                  <>
+                    <button 
+                      onClick={this.handleClearCart} 
+                      style={{ 
+                        background: 'rgba(255,255,255,0.2)', color: 'white', border: 'none', 
+                        padding: '10px 16px', borderRadius: '10px', cursor: 'pointer', fontWeight: '600'
+                      }}
+                    >
+                      Очистить
+                    </button>
+                    <button 
+                      onClick={() => this.setState({ isCheckoutOpen: true })} 
+                      style={{ 
+                        background: '#10b981', color: 'white', border: 'none', 
+                        padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: '700',
+                        boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)'
+                      }}
+                    >
+                      💳 Оплатить заказ
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Список товаров */}
+            <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>Каталог оборудования:</h3>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+              <ProductCard name="Механическая клавиатура" price={18500} image="⌨️" onAddToCart={this.handleAddToCart} />
+              <ProductCard name="Игровая мышь" price={9900} image="🖱️" onAddToCart={this.handleAddToCart} />
+              <ProductCard name="Монитор 27'' 4K" price={115000} image="🖥️" onAddToCart={this.handleAddToCart} />
+              <ProductCard name="Беспроводные наушники" price={24500} image="🎧" onAddToCart={this.handleAddToCart} />
+            </div>
+
+            {/* Модальное окно оплаты */}
+            {isCheckoutOpen && (
+              <div style={{
+                position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+                background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                zIndex: 2000
+              }}>
+                <div style={{ background: 'white', padding: '30px', borderRadius: '20px', width: '380px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+                  <h3 style={{ margin: '0 0 10px 0', color: '#111827' }}>Выберите способ оплаты</h3>
+                  <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '20px' }}>
+                    Сумма к списанию: <strong style={{ color: '#059669' }}>{cart.total.toLocaleString()} ₸</strong>
+                  </p>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+                    <button onClick={() => this.handlePayment('Kaspi QR')} style={{ padding: '12px', border: '1px solid #e5e7eb', borderRadius: '10px', background: '#fef2f2', color: '#dc2626', fontWeight: 'bold', cursor: 'pointer' }}>
+                      🔴 Kaspi QR / Pay
+                    </button>
+                    <button onClick={() => this.handlePayment('Bank Card')} style={{ padding: '12px', border: '1px solid #e5e7eb', borderRadius: '10px', background: '#eff6ff', color: '#2563eb', fontWeight: 'bold', cursor: 'pointer' }}>
+                      💳 Банковская карта
+                    </button>
+                    <button onClick={() => this.handlePayment('Apple / Google Pay')} style={{ padding: '12px', border: '1px solid #e5e7eb', borderRadius: '10px', background: '#f3f4f6', color: '#1f2937', fontWeight: 'bold', cursor: 'pointer' }}>
+                       Pay / Google Pay
+                    </button>
+                  </div>
+
+                  <button onClick={() => this.setState({ isCheckoutOpen: false })} style={{ width: '100%', padding: '10px', border: 'none', background: 'transparent', color: '#6b7280', cursor: 'pointer', fontWeight: '600' }}>
+                    Отмена
+                  </button>
+                </div>
+              </div>
+            )}
+
+          </div>
+        );
+      }
+    }
+
+    // Рендерим приложение в DOM
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
