@@ -1,0 +1,491 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ATU Student Portal</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f6fc;color:#17233d}
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+header{height:70px;background:white;display:flex;align-items:center;justify-content:space-between;padding:0 5%;box-shadow:0 2px 12px #0001}
+.logo{font-size:23px;font-weight:bold;color:#315bea}
+.logo span{color:#17233d}
+.auth{min-height:calc(100vh - 70px);display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#e4ebff,#f5f2ff)}
+.card{background:white;padding:35px;border-radius:20px;width:min(100%,440px);box-shadow:0 15px 45px #22376418}
+.card h1{text-align:center;color:#263d82}
+.subtitle{text-align:center;color:#8993a6;margin-bottom:25px}
+.field{display:block;margin:15px 0;font-size:13px;font-weight:bold}
+.field input{display:block;width:100%;margin-top:7px;padding:14px;border:1px solid #dce3ef;border-radius:9px;outline:none}
+.field input:focus{border-color:#315bea}
+.primary{width:100%;padding:14px;background:linear-gradient(100deg,#315bea,#7652df);border:0;border-radius:9px;color:white;font-weight:bold}
+.primary:hover{opacity:.9}
+.switch{text-align:center;margin-top:20px;font-size:14px}
+.link{border:0;background:none;color:#315bea;font-weight:bold}
+.message{text-align:center;font-size:13px;min-height:18px;margin-top:10px}
+.error{color:#d33}.success{color:#15976b}
+.demo{background:#f0f3ff;padding:13px;border-radius:9px;text-align:center;font-size:13px;margin-top:18px;line-height:1.8}
+.app{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 70px)}
+aside{background:white;padding:20px 14px;display:flex;flex-direction:column;border-right:1px solid #e8edf5}
+.student{padding:15px;border-bottom:1px solid #eee;margin-bottom:15px}
+.avatar{width:43px;height:43px;background:#315bea;color:white;border-radius:13px;display:grid;place-items:center;font-size:20px;font-weight:bold;float:left;margin-right:10px}
+.student small{display:block;color:#8993a6;margin-top:5px}
+.nav{padding:13px;border:0;background:white;text-align:left;border-radius:9px;margin:3px 0;color:#64718a;font-weight:bold}
+.nav.active,.nav:hover{background:#eef2ff;color:#315bea}
+.logout{margin-top:auto;padding:13px;border:0;border-radius:9px;background:#fff0f0;color:#c44;font-weight:bold}
+main{padding:30px 4%;max-width:1400px;width:100%;margin:auto}
+.page h1{margin-top:0}
+.muted{color:#8993a6;font-size:14px}
+.hero{background:linear-gradient(110deg,#315bea,#7652df);color:white;padding:27px;border-radius:17px;margin:20px 0}
+.hero p{color:#e5eaff}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}
+.stat,.panel{background:white;border:1px solid #e8edf5;border-radius:14px;padding:19px;margin-bottom:15px}
+.stat small{color:#8993a6}
+.stat strong{display:block;font-size:28px;margin:12px 0}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.row{padding:13px 0;border-bottom:1px solid #edf0f5;display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.blue{color:#315bea;font-weight:bold}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.info{padding:16px;background:#f7f9ff;border-radius:10px;border:1px solid #e8edf5;overflow-wrap:anywhere}
+.info small{display:block;color:#8993a6;margin-bottom:8px}
+table{width:100%;border-collapse:collapse}
+td,th{text-align:left;padding:13px;border-bottom:1px solid #eee;font-size:13px}
+th{color:#8993a6}
+.tablewrap{overflow-x:auto}
+.progress{height:12px;background:#e9edf6;border-radius:20px;overflow:hidden;margin:15px 0}
+.progress div{height:100%;background:#315bea;border-radius:20px}
+.footer{text-align:center;color:#a0a9b9;padding:25px;font-size:12px}
+@media(max-width:850px){
+.app{grid-template-columns:1fr}
+aside{border-right:0;border-bottom:1px solid #eee}
+.student{display:none}
+.navs{display:flex;overflow-x:auto}
+.nav{white-space:nowrap}
+.logout{margin-top:10px}
+.stats{grid-template-columns:1fr 1fr}
+}
+@media(max-width:550px){
+.columns,.grid{grid-template-columns:1fr}
+main{padding:20px 13px}
+.card{padding:24px}
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">ATU <span>Student Portal</span></div>
+ <b style="color:#15976b;font-size:13px">● Система активна</b>
+</header>
+
+<section class="auth" id="auth">
+ <div class="card" id="loginPage">
+  <h1>🎓 Вход в систему</h1>
+  <p class="subtitle">Личный кабинет студента АТУ</p>
+
+  <form id="loginForm">
+   <label class="field">Логин
+    <input id="loginInput" placeholder="Введите логин" required>
+   </label>
+   <label class="field">Пароль
+    <input id="passwordInput" type="password" placeholder="Введите пароль" required>
+   </label>
+   <button class="primary" type="submit">Войти в аккаунт</button>
+   <div class="message" id="loginMessage"></div>
+  </form>
+
+  <p class="switch">Нет аккаунта?
+   <button class="link" id="showRegister" type="button">Регистрация</button>
+  </p>
+
+  <div class="demo">
+   ДЕМО-АККАУНТ<br>
+   Логин: <b>student</b><br>
+   Пароль: <b>123456</b>
+  </div>
+ </div>
+
+ <div class="card hidden" id="registerPage">
+  <h1>Создать аккаунт</h1>
+  <p class="subtitle">Регистрация студента АТУ</p>
+
+  <form id="registerForm">
+   <label class="field">Имя и фамилия
+    <input id="regName" required placeholder="Ваше имя">
+   </label>
+   <label class="field">Логин
+    <input id="regLogin" required minlength="3" placeholder="Придумайте логин">
+   </label>
+   <label class="field">Пароль
+    <input id="regPassword" type="password" required minlength="6" placeholder="Минимум 6 символов">
+   </label>
+   <label class="field">Учебная группа
+    <input id="regGroup" required placeholder="Например, ИС-25-22">
+   </label>
+   <label class="field">Специальность
+    <input id="regSpecialty" required placeholder="Ваша специальность">
+   </label>
+   <button class="primary" type="submit">Создать аккаунт</button>
+   <div class="message" id="registerMessage"></div>
+  </form>
+
+  <p class="switch">Уже есть аккаунт?
+   <button class="link" id="showLogin" type="button">Войти</button>
+  </p>
+ </div>
+</section>
+
+<section class="app hidden" id="app">
+<aside>
+ <div class="student">
+  <div class="avatar" id="avatar">S</div>
+  <b id="sideName">Студент</b>
+  <small id="sideGroup">Группа</small>
+ </div>
+
+ <div class="navs">
+  <button class="nav active" data-page="home">⌂ Главная</button>
+  <button class="nav" data-page="profile">♙ Личный кабинет</button>
+  <button class="nav" data-page="grades">▤ Мои оценки</button>
+  <button class="nav" data-page="attendance">◷ Посещаемость</button>
+  <button class="nav" data-page="exams">▣ Экзамены</button>
+  <button class="nav" data-page="schedule">▦ Расписание</button>
+ </div>
+
+ <button class="logout" id="logout">Выйти из аккаунта</button>
+</aside>
+
+<main>
+
+<section class="page" id="home">
+ <h1>Здравствуйте, <span id="firstName">Студент</span>!</h1>
+ <p class="muted">Добро пожаловать в личный кабинет АТУ.</p>
+
+ <div class="hero">
+  <h2>Ваш студенческий кабинет</h2>
+  <p>Успеваемость, экзамены и учебное расписание.</p>
+ </div>
+
+ <div class="stats">
+  <div class="stat"><small>Средний балл</small><strong>90</strong><small>Из 100 баллов</small></div>
+  <div class="stat"><small>Посещаемость</small><strong>92%</strong><small>За учебный период</small></div>
+  <div class="stat"><small>Предметы</small><strong>6</strong><small>Дисциплин</small></div>
+  <div class="stat"><small>Экзамены</small><strong>3</strong><small>Предстоящие</small></div>
+ </div>
+
+ <div class="columns">
+  <div class="panel">
+   <h3>Последние оценки</h3>
+   <div id="recentGrades"></div>
+  </div>
+  <div class="panel">
+   <h3>Ближайший экзамен</h3>
+   <div id="nearestExam"></div>
+  </div>
+ </div>
+</section>
+
+<section class="page hidden" id="profile">
+ <h1>Личный кабинет</h1>
+ <p class="muted">Личная информация студента АТУ</p>
+ <div class="panel">
+  <div class="avatar" id="profileAvatar">S</div>
+  <h2 id="profileName">Студент</h2>
+  <p class="muted">Студент Алматинского технологического университета</p>
+ </div>
+ <div class="panel">
+  <h3>Данные студента</h3>
+  <div class="grid">
+   <div class="info"><small>Имя и фамилия</small><b id="infoName"></b></div>
+   <div class="info"><small>Логин</small><b id="infoLogin"></b></div>
+   <div class="info"><small>Учебная группа</small><b id="infoGroup"></b></div>
+   <div class="info"><small>Специальность</small><b id="infoSpecialty"></b></div>
+   <div class="info"><small>Учебное заведение</small><b>АТУ</b></div>
+   <div class="info"><small>Роль аккаунта</small><b>Студент</b></div>
+  </div>
+ </div>
+</section>
+
+<section class="page hidden" id="grades">
+ <h1>Мои оценки</h1>
+ <p class="muted">Учебная успеваемость</p>
+ <div class="panel tablewrap">
+  <table>
+   <thead><tr><th>Предмет</th><th>Баллы</th><th>Оценка</th><th>Результат</th></tr></thead>
+   <tbody id="gradeTable"></tbody>
+  </table>
+ </div>
+</section>
+
+<section class="page hidden" id="attendance">
+ <h1>Посещаемость</h1>
+ <p class="muted">Статистика посещения занятий</p>
+ <div class="panel">
+  <h3>Общая посещаемость</h3>
+  <h1>92%</h1>
+  <div class="progress"><div style="width:92%"></div></div>
+  <div class="grid">
+   <div class="info"><small>Посещено занятий</small><b>46</b></div>
+   <div class="info"><small>Пропущено занятий</small><b>4</b></div>
+   <div class="info"><small>Всего занятий</small><b>50</b></div>
+   <div class="info"><small>Посещаемость</small><b>92%</b></div>
+  </div>
+ </div>
+</section>
+
+<section class="page hidden" id="exams">
+ <h1>Экзамены</h1>
+ <p class="muted">График экзаменационной сессии</p>
+ <div class="panel"><div id="examList"></div></div>
+</section>
+
+<section class="page hidden" id="schedule">
+ <h1>Расписание</h1>
+ <p class="muted">Учебная неделя</p>
+ <div class="panel"><div id="scheduleList"></div></div>
+</section>
+
+<div class="footer">© 2026 ATU Student Portal<br>Демонстрационный учебный проект</div>
+</main>
+</section>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+const DEMO = {
+ name:"Студент АТУ",
+ login:"student",
+ password:"123456",
+ group:"Не указана",
+ specialty:"Не указана"
+};
+
+let currentUser = null;
+let memoryUsers = [];
+
+function readUsers(){
+ try{
+  const data = localStorage.getItem("atuStudentUsers");
+  return data ? JSON.parse(data) : memoryUsers;
+ }catch(e){
+  return memoryUsers;
+ }
+}
+
+function saveUsers(users){
+ memoryUsers = users;
+ try{
+  localStorage.setItem("atuStudentUsers",JSON.stringify(users));
+ }catch(e){}
+}
+
+const subjects=[
+ ["Программирование",95],
+ ["Математика",88],
+ ["Информатика",91],
+ ["Английский язык",84],
+ ["История Казахстана",87],
+ ["Физическая культура",96]
+];
+
+const exams=[
+ ["Математика","10.12.2026","09:00"],
+ ["Программирование","15.12.2026","11:00"],
+ ["Информатика","20.12.2026","10:00"]
+];
+
+const schedule=[
+ ["Понедельник","Программирование","09:00"],
+ ["Понедельник","Математика","11:00"],
+ ["Вторник","Информатика","10:00"],
+ ["Среда","Английский язык","09:00"],
+ ["Четверг","История Казахстана","11:00"],
+ ["Пятница","Физическая культура","10:00"]
+];
+
+function message(id,text,type=""){
+ $(id).textContent=text;
+ $(id).className="message "+type;
+}
+
+function openAuth(register=false){
+ $("auth").classList.remove("hidden");
+ $("app").classList.add("hidden");
+ $("loginPage").classList.toggle("hidden",register);
+ $("registerPage").classList.toggle("hidden",!register);
+}
+
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+ $(id).classList.remove("hidden");
+
+ document.querySelectorAll(".nav").forEach(b=>{
+  b.classList.toggle("active",b.dataset.page===id);
+ });
+}
+
+function addRow(parent,left,right){
+ const div=document.createElement("div");
+ div.className="row";
+ const a=document.createElement("span");
+ const b=document.createElement("span");
+ a.textContent=left;
+ b.textContent=right;
+ b.className="blue";
+ div.append(a,b);
+ parent.appendChild(div);
+}
+
+function renderPortal(){
+ const u=currentUser;
+ const initial=(u.name.trim()[0]||"S").toUpperCase();
+
+ $("firstName").textContent=u.name.split(" ")[0];
+ $("sideName").textContent=u.name;
+ $("sideGroup").textContent=u.group;
+ $("avatar").textContent=initial;
+ $("profileAvatar").textContent=initial;
+ $("profileName").textContent=u.name;
+
+ $("infoName").textContent=u.name;
+ $("infoLogin").textContent=u.login;
+ $("infoGroup").textContent=u.group;
+ $("infoSpecialty").textContent=u.specialty;
+
+ ["recentGrades","gradeTable","examList","scheduleList","nearestExam"]
+ .forEach(id=>$(id).replaceChildren());
+
+ subjects.forEach(s=>{
+  const mark=s[1]>=90?"5":s[1]>=75?"4":s[1]>=50?"3":"2";
+  addRow($("recentGrades"),s[0],s[1]+"/100");
+
+  const tr=document.createElement("tr");
+  [s[0],s[1],mark,s[1]>=50?"Зачтено":"Не зачтено"].forEach(v=>{
+   const td=document.createElement("td");
+   td.textContent=v;
+   tr.appendChild(td);
+  });
+  $("gradeTable").appendChild(tr);
+ });
+
+ exams.forEach((e,i)=>{
+  addRow($("examList"),e[0],e[1]+" · "+e[2]);
+  if(i===0){
+   const h=document.createElement("h2");
+   h.textContent=e[0];
+   const p=document.createElement("p");
+   p.className="muted";
+   p.textContent=e[1]+" · "+e[2];
+   $("nearestExam").append(h,p);
+  }
+ });
+
+ schedule.forEach(s=>{
+  addRow($("scheduleList"),s[0]+" · "+s[1],s[2]);
+ });
+}
+
+// Переход к регистрации
+$("showRegister").addEventListener("click",()=>{
+ openAuth(true);
+ message("registerMessage","");
+});
+
+$("showLogin").addEventListener("click",()=>{
+ openAuth(false);
+});
+
+// Создание личного аккаунта
+$("registerForm").addEventListener("submit",function(e){
+ e.preventDefault();
+
+ const u={
+  name:$("regName").value.trim(),
+  login:$("regLogin").value.trim(),
+  password:$("regPassword").value,
+  group:$("regGroup").value.trim(),
+  specialty:$("regSpecialty").value.trim()
+ };
+
+ if(u.password.length<6 || u.login.length<3){
+  message("registerMessage","Проверьте логин и пароль.","error");
+  return;
+ }
+
+ const users=readUsers();
+
+ if(u.login.toLowerCase()==="student" ||
+ users.some(x=>x.login.toLowerCase()===u.login.toLowerCase())){
+  message("registerMessage","Такой логин уже существует.","error");
+  return;
+ }
+
+ users.push(u);
+ saveUsers(users);
+ this.reset();
+
+ openAuth(false);
+ message("loginMessage","Аккаунт создан! Теперь войдите.","success");
+ $("loginInput").value=u.login;
+});
+
+// Вход в свой аккаунт
+$("loginForm").addEventListener("submit",function(e){
+ e.preventDefault();
+
+ const login=$("loginInput").value.trim();
+ const password=$("passwordInput").value;
+
+ let found=null;
+
+ if(login.toLowerCase()===DEMO.login && password===DEMO.password){
+  found=DEMO;
+ }else{
+  found=readUsers().find(u=>
+   u.login.toLowerCase()===login.toLowerCase() &&
+   u.password===password
+  );
+ }
+
+ if(!found){
+  message("loginMessage","Неверный логин или пароль.","error");
+  return;
+ }
+
+ currentUser=found;
+
+ $("auth").classList.add("hidden");
+ $("app").classList.remove("hidden");
+
+ this.reset();
+ message("loginMessage","");
+ renderPortal();
+ showPage("home");
+});
+
+// Разделы кабинета
+document.querySelectorAll(".nav").forEach(button=>{
+ button.addEventListener("click",()=>{
+  showPage(button.dataset.page);
+ });
+});
+
+// Выход
+$("logout").addEventListener("click",()=>{
+ currentUser=null;
+ $("loginForm").reset();
+ openAuth(false);
+ message("loginMessage","");
+});
+
+// Первоначальный экран
+openAuth(false);
+</script>
+
+</body>
+</html>
