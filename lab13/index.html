@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Список покупок — Задание 1</title>
+<style>
+:root{--bg:#f4f7ff;--card:#fff;--ink:#172033;--muted:#718096;--primary:#6558e8;--primary2:#8b5cf6;--line:#e8eaf3;--green:#16a36a;--red:#e45467}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 10% 5%,#e5e7ff,transparent 35%),radial-gradient(circle at 95% 90%,#d9f7f0,transparent 30%),var(--bg);font:16px/1.5 Inter,Segoe UI,Arial,sans-serif;color:var(--ink);padding:36px 16px}
+.wrap{max-width:850px;margin:auto}
+.hero{background:linear-gradient(120deg,#5145cd,#8b5cf6);color:white;padding:30px;border-radius:24px;box-shadow:0 18px 45px #6558e833}
+.tag{display:inline-block;background:#ffffff26;border:1px solid #ffffff50;border-radius:99px;padding:5px 12px;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+h1{font-size:clamp(26px,5vw,38px);margin:12px 0 5px}
+.hero p{margin:0;color:#ecebff}
+.card{margin-top:22px;background:var(--card);border:1px solid #fff;border-radius:22px;padding:25px;box-shadow:0 14px 40px #25305a0d}
+h2{margin:0 0 5px;font-size:22px}
+.sub{color:var(--muted);margin:0 0 20px}
+.entry{display:flex;gap:10px}
+.entry input,.deletebar input{flex:1;min-width:0;padding:14px 16px;border:1px solid var(--line);border-radius:13px;font:inherit;outline:none;background:#fbfcff}
+input:focus{border-color:var(--primary);box-shadow:0 0 0 4px #6558e81a}
+button{border:0;border-radius:13px;padding:13px 18px;font:700 14px inherit;cursor:pointer;transition:.18s}
+.add{background:linear-gradient(120deg,var(--primary),var(--primary2));color:#fff;box-shadow:0 7px 16px #6558e833}
+button:hover{transform:translateY(-1px);filter:brightness(.97)}
+.message{min-height:25px;margin:10px 2px;color:var(--green);font-size:14px}
+.message.error{color:var(--red)}
+.list-head{display:flex;align-items:center;justify-content:space-between;margin-top:16px;color:var(--muted);font-size:13px}
+ul{list-style:none;padding:0;margin:8px 0 0}
+.item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 4px;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.name{overflow-wrap:anywhere}
+.remove{background:#fff0f1;color:#d83d54;padding:8px 12px;border-radius:10px}
+.empty{padding:22px 8px;text-align:center;color:var(--muted);background:#fafaff;border:1px dashed #d9d9ee;border-radius:14px}
+.deletebar{display:flex;gap:10px;margin-top:20px;padding-top:19px;border-top:1px solid var(--line)}
+.delete{background:#fff0f1;color:#c83d53}
+.count{background:#f0efff;color:#5145cd;padding:6px 11px;border-radius:99px;font-weight:700}
+.tip{margin-top:18px;color:var(--muted);font-size:13px}
+@media(max-width:580px){
+body{padding:18px 12px}
+.hero{padding:23px}
+.card{padding:18px}
+.entry,.deletebar{flex-direction:column}
+.entry button,.deletebar button{width:100%}
+}
+</style>
+</head>
+<body>
+
+<main class="wrap">
+<header class="hero">
+<span class="tag">Лабораторная работа №13 · Уровень базовый</span>
+<h1>Список покупок</h1>
+<p>Добавляйте товары, просматривайте список и удаляйте ненужное.</p>
+</header>
+
+<section class="card">
+<h2>Мои покупки</h2>
+<p class="sub">Введите название товара и нажмите «Добавить».</p>
+
+<div class="entry">
+<input id="productInput" type="text" maxlength="80" placeholder="Например, молоко" aria-label="Название товара">
+<button class="add" id="addBtn">＋ Добавить</button>
+</div>
+
+<div class="message" id="message" aria-live="polite"></div>
+
+<div class="list-head">
+<span>Ваш список</span>
+<span class="count" id="count">0 товаров</span>
+</div>
+
+<ul id="productList"></ul>
+
+<div class="deletebar">
+<input id="deleteInput" type="text" maxlength="80" placeholder="Название товара для удаления">
+<button class="delete" id="deleteBtn">Удалить по названию</button>
+</div>
+
+<p class="tip">Подсказка: название для удаления вводите так же, как при добавлении. Регистр букв не имеет значения.</p>
+</section>
+</main>
+
+<script>
+"use strict";
+
+const products = [];
+
+const input = document.getElementById("productInput");
+const list = document.getElementById("productList");
+const message = document.getElementById("message");
+
+function notify(text, error = false) {
+    message.textContent = text;
+    message.classList.toggle("error", error);
+}
+
+function render() {
+    list.replaceChildren();
+
+    document.getElementById("count").textContent =
+        products.length + " " +
+        (products.length === 1 ? "товар" :
+        products.length < 5 ? "товара" : "товаров");
+
+    if (!products.length) {
+        const li = document.createElement("li");
+        li.className = "empty";
+        li.textContent = "Пока список пуст. Добавьте первый товар выше.";
+        list.append(li);
+        return;
+    }
+
+    products.forEach((product, index) => {
+        const li = document.createElement("li");
+        li.className = "item";
+
+        const name = document.createElement("span");
+        name.className = "name";
+        name.textContent = (index + 1) + ". " + product;
+
+        const btn = document.createElement("button");
+        btn.className = "remove";
+        btn.textContent = "Удалить";
+        btn.addEventListener("click", () => removeProduct(product));
+
+        li.append(name, btn);
+        list.append(li);
+    });
+}
+
+function addProduct() {
+    const name = input.value.trim();
+
+    if (!name) {
+        notify("Сначала введите название товара.", true);
+        input.focus();
+        return;
+    }
+
+    products.push(name);
+    input.value = "";
+
+    render();
+    notify("Товар «" + name + "» добавлен.");
+    input.focus();
+}
+
+function removeProduct(raw) {
+    const name = raw.trim();
+
+    if (!name) {
+        notify("Введите название товара для удаления.", true);
+        return;
+    }
+
+    const index = products.findIndex(
+        p => p.toLocaleLowerCase("ru") === name.toLocaleLowerCase("ru")
+    );
+
+    if (index < 0) {
+        notify("Товар «" + name + "» отсутствует в списке.", true);
+        return;
+    }
+
+    const removed = products.splice(index, 1)[0];
+
+    render();
+    notify("Товар «" + removed + "» удалён.");
+}
+
+document.getElementById("addBtn").addEventListener("click", addProduct);
+
+input.addEventListener("keydown", e => {
+    if (e.key === "Enter") addProduct();
+});
+
+document.getElementById("deleteBtn").addEventListener("click", () => {
+    const field = document.getElementById("deleteInput");
+    removeProduct(field.value);
+    field.value = "";
+});
+
+document.getElementById("deleteInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+        document.getElementById("deleteBtn").click();
+    }
+});
+
+render();
+</script>
+
+</body>
+</html>

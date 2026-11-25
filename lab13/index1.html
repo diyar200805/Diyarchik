@@ -1,0 +1,612 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Регистрация на курс — Задание 11</title>
+
+<style>
+:root{
+--bg:#f3f8f7;
+--card:#fff;
+--ink:#142b2a;
+--muted:#718582;
+--primary:#087f73;
+--mint:#dff5ef;
+--line:#e2eeeb;
+--red:#d94b60;
+}
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+min-height:100vh;
+padding:36px 16px;
+background:
+radial-gradient(circle at 90% 8%,#d7f3eb,transparent 33%),
+radial-gradient(circle at 5% 95%,#e1e8ff,transparent 32%),
+var(--bg);
+font:16px/1.5 Inter,Segoe UI,Arial,sans-serif;
+color:var(--ink);
+}
+
+.wrap{
+max-width:950px;
+margin:auto;
+}
+
+.hero{
+position:relative;
+overflow:hidden;
+padding:30px;
+border-radius:24px;
+color:#fff;
+background:linear-gradient(120deg,#075e58,#0e9b87);
+box-shadow:0 18px 45px #087f7330;
+}
+
+.tag{
+display:inline-block;
+padding:5px 12px;
+border:1px solid #ffffff55;
+background:#ffffff20;
+border-radius:99px;
+font-size:12px;
+letter-spacing:.08em;
+text-transform:uppercase;
+}
+
+h1{
+font-size:clamp(26px,5vw,38px);
+margin:12px 0 5px;
+}
+
+.hero p{
+margin:0;
+color:#d9f8f0;
+}
+
+.card{
+margin-top:22px;
+padding:25px;
+background:var(--card);
+border-radius:22px;
+box-shadow:0 14px 40px #1b4b4410;
+}
+
+h2{
+margin:0 0 5px;
+font-size:22px;
+}
+
+.sub{
+margin:0 0 20px;
+color:var(--muted);
+}
+
+.entry{
+display:grid;
+grid-template-columns:2fr 1fr 1fr 1.4fr;
+gap:10px;
+}
+
+input,select{
+width:100%;
+min-width:0;
+padding:13px 15px;
+border:1px solid var(--line);
+border-radius:12px;
+background:#fbfefd;
+font:inherit;
+outline:none;
+color:var(--ink);
+}
+
+input:focus,select:focus{
+border-color:var(--primary);
+box-shadow:0 0 0 4px #087f7318;
+}
+
+button{
+border:0;
+border-radius:12px;
+padding:12px 16px;
+font:700 14px Arial,sans-serif;
+cursor:pointer;
+transition:.18s;
+}
+
+button:hover{
+transform:translateY(-1px);
+filter:brightness(.97);
+}
+
+.primary{
+grid-column:1/-1;
+background:linear-gradient(120deg,#087f73,#11a58f);
+color:white;
+box-shadow:0 7px 16px #087f732b;
+}
+
+.soft{
+background:var(--mint);
+color:#087367;
+}
+
+.message{
+min-height:25px;
+margin:10px 2px;
+color:#087f57;
+font-size:14px;
+}
+
+.message.error{
+color:var(--red);
+}
+
+.tools{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:14px;
+}
+
+.tools input{
+flex:1;
+min-width:180px;
+}
+
+.stats{
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+margin:20px 0 10px;
+}
+
+.stat{
+flex:1;
+min-width:145px;
+padding:14px 16px;
+border-radius:14px;
+background:#eff9f6;
+border:1px solid #e0f2ec;
+}
+
+.stat span{
+display:block;
+color:var(--muted);
+font-size:13px;
+}
+
+.stat strong{
+font-size:25px;
+color:#087f73;
+}
+
+ul{
+list-style:none;
+padding:0;
+margin:12px 0 0;
+}
+
+.item{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:15px;
+padding:16px;
+margin-bottom:10px;
+background:#f8fcfb;
+border:1px solid var(--line);
+border-radius:14px;
+}
+
+.student-info{
+flex:1;
+min-width:0;
+}
+
+.student-name{
+font-weight:700;
+font-size:16px;
+color:var(--ink);
+}
+
+.student-details{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin-top:7px;
+}
+
+.detail{
+background:#e5f5ef;
+color:#087367;
+padding:5px 10px;
+border-radius:8px;
+font-size:12px;
+}
+
+.remove{
+background:#fff0f2;
+color:#c83f55;
+padding:9px 13px;
+}
+
+.empty{
+text-align:center;
+color:var(--muted);
+padding:24px 10px;
+background:#f8fcfb;
+border:1px dashed #cfe3dd;
+border-radius:14px;
+}
+
+.note{
+margin-top:17px;
+color:var(--muted);
+font-size:13px;
+}
+
+@media(max-width:650px){
+body{padding:18px 12px}
+.hero{padding:23px}
+.card{padding:18px}
+.entry{grid-template-columns:1fr}
+.primary{grid-column:auto}
+.entry button{width:100%}
+.tools{flex-direction:column}
+.tools button{width:100%}
+.item{align-items:flex-start}
+}
+</style>
+</head>
+
+<body>
+
+<main class="wrap">
+
+<header class="hero">
+
+<span class="tag">
+Лабораторная работа №13 · Задание 11
+</span>
+
+<h1>Регистрация на курс</h1>
+
+<p>
+Управляйте списком участников: регистрируйте,
+ищите и сортируйте.
+</p>
+
+</header>
+
+<section class="card">
+
+<h2>Добавить участника</h2>
+
+<p class="sub">
+Заполните информацию об участнике курса.
+</p>
+
+<div class="entry">
+
+<input
+id="studentInput"
+type="text"
+maxlength="80"
+placeholder="Имя и фамилия"
+>
+
+<input
+id="ageInput"
+type="number"
+min="1"
+max="120"
+placeholder="Возраст"
+>
+
+<select id="genderInput">
+<option value="">Выберите пол</option>
+<option value="Мужской">Мужской</option>
+<option value="Женский">Женский</option>
+<option value="Не указан">Не указывать</option>
+</select>
+
+<input
+id="nationInput"
+type="text"
+maxlength="60"
+placeholder="Национальность (необязательно)"
+>
+
+<button class="primary" id="addBtn">
+＋ Зарегистрировать
+</button>
+
+</div>
+
+<div class="message" id="message" aria-live="polite"></div>
+
+<div class="tools">
+
+<input
+id="searchInput"
+type="search"
+placeholder="⌕ Поиск по имени..."
+>
+
+<button class="soft" id="sortBtn">
+Сортировать А–Я
+</button>
+
+<button class="soft" id="allBtn">
+Показать всех
+</button>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+<span>Всего участников</span>
+<strong id="total">0</strong>
+</div>
+
+<div class="stat">
+<span>Найдено по запросу</span>
+<strong id="found">0</strong>
+</div>
+
+</div>
+
+<ul id="studentList"></ul>
+
+<p class="note">
+Информация об участниках хранится в массиве JavaScript.
+</p>
+
+</section>
+</main>
+
+<script>
+"use strict";
+
+// Массив участников
+const students = [];
+
+const nameInput = document.getElementById("studentInput");
+const ageInput = document.getElementById("ageInput");
+const genderInput = document.getElementById("genderInput");
+const nationInput = document.getElementById("nationInput");
+const searchInput = document.getElementById("searchInput");
+const list = document.getElementById("studentList");
+const message = document.getElementById("message");
+
+let query = "";
+
+// Вывод сообщения
+function notify(text, error = false) {
+    message.textContent = text;
+    message.classList.toggle("error", error);
+}
+
+// Отображение участников
+function render() {
+
+    const filtered = students.filter(student =>
+        student.name.toLocaleLowerCase("ru").includes(
+            query.toLocaleLowerCase("ru")
+        )
+    );
+
+    list.replaceChildren();
+
+    if (!filtered.length) {
+
+        const li = document.createElement("li");
+        li.className = "empty";
+
+        li.textContent = students.length
+            ? "Участники не найдены."
+            : "Участников пока нет. Добавьте первого участника.";
+
+        list.append(li);
+
+    } else {
+
+        filtered.forEach(student => {
+
+            const li = document.createElement("li");
+            li.className = "item";
+
+            const info = document.createElement("div");
+            info.className = "student-info";
+
+            const name = document.createElement("div");
+            name.className = "student-name";
+            name.textContent = student.name;
+
+            const details = document.createElement("div");
+            details.className = "student-details";
+
+            const age = document.createElement("span");
+            age.className = "detail";
+            age.textContent = "Возраст: " + student.age;
+
+            const gender = document.createElement("span");
+            gender.className = "detail";
+            gender.textContent = "Пол: " + student.gender;
+
+            const nation = document.createElement("span");
+            nation.className = "detail";
+            nation.textContent = "Национальность: " +
+                (student.nation || "Не указана");
+
+            details.append(age, gender, nation);
+            info.append(name, details);
+
+            const btn = document.createElement("button");
+            btn.className = "remove";
+            btn.textContent = "Удалить";
+
+            btn.addEventListener("click", () => {
+                removeStudent(student.id);
+            });
+
+            li.append(info, btn);
+            list.append(li);
+
+        });
+    }
+
+    document.getElementById("total").textContent =
+        students.length;
+
+    document.getElementById("found").textContent =
+        filtered.length;
+}
+
+// Добавление участника
+function addStudent() {
+
+    const name = nameInput.value.trim().replace(/\s+/g, " ");
+    const age = Number(ageInput.value);
+    const gender = genderInput.value;
+    const nation = nationInput.value.trim();
+
+    if (!name) {
+        notify("Введите имя и фамилию.", true);
+        nameInput.focus();
+        return;
+    }
+
+    if (!ageInput.value || !Number.isInteger(age) ||
+        age < 1 || age > 120) {
+
+        notify("Введите корректный возраст от 1 до 120.", true);
+        ageInput.focus();
+        return;
+    }
+
+    if (!gender) {
+        notify("Выберите пол участника.", true);
+        genderInput.focus();
+        return;
+    }
+
+    // Проверка повторной регистрации
+    if (students.some(student =>
+        student.name.toLocaleLowerCase("ru") ===
+        name.toLocaleLowerCase("ru")
+    )) {
+
+        notify("Такой участник уже зарегистрирован!", true);
+        return;
+    }
+
+    const student = {
+        id: Date.now() + Math.random(),
+        name: name,
+        age: age,
+        gender: gender,
+        nation: nation
+    };
+
+    students.push(student);
+
+    nameInput.value = "";
+    ageInput.value = "";
+    genderInput.value = "";
+    nationInput.value = "";
+
+    render();
+
+    notify("Участник успешно зарегистрирован!");
+
+    nameInput.focus();
+}
+
+// Удаление участника
+function removeStudent(id) {
+
+    const index = students.findIndex(student =>
+        student.id === id
+    );
+
+    if (index === -1) {
+        notify("Участник не найден.", true);
+        return;
+    }
+
+    const removed = students.splice(index, 1)[0];
+
+    render();
+
+    notify("Участник " + removed.name + " удалён.");
+}
+
+// Регистрация кнопкой
+document.getElementById("addBtn").addEventListener(
+    "click",
+    addStudent
+);
+
+// Регистрация клавишей Enter
+[nameInput, ageInput, genderInput, nationInput].forEach(input => {
+
+    input.addEventListener("keydown", event => {
+
+        if (event.key === "Enter") {
+            addStudent();
+        }
+
+    });
+
+});
+
+// Поиск
+searchInput.addEventListener("input", () => {
+
+    query = searchInput.value.trim();
+
+    render();
+
+});
+
+// Сортировка по алфавиту
+document.getElementById("sortBtn").addEventListener("click", () => {
+
+    students.sort((a, b) =>
+        a.name.localeCompare(b.name, "ru", {
+            sensitivity: "base"
+        })
+    );
+
+    render();
+
+    notify("Список отсортирован по алфавиту.");
+
+});
+
+// Показать всех участников
+document.getElementById("allBtn").addEventListener("click", () => {
+
+    searchInput.value = "";
+    query = "";
+
+    render();
+
+    notify("Показан полный список участников.");
+
+});
+
+// Первоначальное отображение
+render();
+
+</script>
+
+</body>
+</html>
